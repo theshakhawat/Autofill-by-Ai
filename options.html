@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoFill by Ai — Settings & Developer Playground</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="icons/icon48.png" alt="AutoFill by Ai Logo" class="brand-logo" />
+        <div class="brand-meta">
+          <div class="brand-title-row">
+            <h1 class="brand-name">AutoFill by Ai</h1>
+            <span class="version-pill">v1.0</span>
+          </div>
+          <p class="brand-tagline">Context-Aware Semantic Form Filler for Web Developers</p>
+        </div>
+      </div>
+
+      <div class="topbar-status" id="config-status-pill">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">কনফিগারেশন চেক করা হচ্ছে...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Left Column: Primary AI & Fallback AI Settings -->
+    <section class="settings-column">
+      <!-- Primary AI Card -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <span class="eyebrow">STEP 01 • PRIMARY ENGINE</span>
+            <h2 class="card-title">প্রাইমারি AI প্ল্যাটফর্ম ও API Key</h2>
+            <p class="card-desc">
+              আপনার পছন্দের AI কোম্পানি সিলেক্ট করে API Key দিন। একবার সেভ করলে পরবর্তীতে এক্সটেনশন আইকনে ক্লিক করলেই সরাসরি ফর্ম অটোফিল হবে।
+            </p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">AI প্ল্যাটফর্ম নির্বাচন করুন (জনপ্রিয় প্ল্যাটফর্মসমূহ)</label>
+          <div class="provider-grid" id="primary-provider-grid">
+            <button type="button" class="provider-card active" data-provider="google">
+              <div class="provider-top">
+                <span class="provider-name">Google Gemini</span>
+                <span class="provider-tag free">Free Tier</span>
+              </div>
+              <span class="provider-sub">Gemini 2.5 / 2.0 Flash</span>
+            </button>
+
+            <button type="button" class="provider-card" data-provider="openrouter">
+              <div class="provider-top">
+                <span class="provider-name">OpenRouter</span>
+                <span class="provider-tag free">Free Models</span>
+              </div>
+              <span class="provider-sub">DeepSeek, Llama, Qwen (:free)</span>
+            </button>
+
+            <button type="button" class="provider-card" data-provider="openai">
+              <div class="provider-top">
+                <span class="provider-name">OpenAI</span>
+                <span class="provider-tag">Popular</span>
+              </div>
+              <span class="provider-sub">GPT-4o Mini / GPT-4.1</span>
+            </button>
+
+            <button type="button" class="provider-card" data-provider="anthropic">
+              <div class="provider-top">
+                <span class="provider-name">Anthropic</span>
+                <span class="provider-tag">Popular</span>
+              </div>
+              <span class="provider-sub">Claude 3.5 Haiku / Sonnet</span>
+            </button>
+
+            <button type="button" class="provider-card" data-provider="nvidia">
+              <div class="provider-top">
+                <span class="provider-name">NVIDIA NIM</span>
+                <span class="provider-tag free">Free Credits</span>
+              </div>
+              <span class="provider-sub">Llama 3.3 70B / DeepSeek</span>
+            </button>
+
+            <button type="button" class="provider-card" data-provider="groq">
+              <div class="provider-top">
+                <span class="provider-name">Groq Cloud</span>
+                <span class="provider-tag free">Free &amp; Fast</span>
+              </div>
+              <span class="provider-sub">Llama 3.3 70B Instant</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="label-row">
+            <label class="field-label" for="primary-api-key">API Key (<span id="primary-provider-label">Google Gemini</span>)</label>
+            <button type="button" class="text-btn" id="toggle-primary-key">Show Key</button>
+          </div>
+          <div class="input-with-action">
+            <input
+              type="password"
+              id="primary-api-key"
+              class="text-input mono"
+              placeholder="আপনার API Key এখানে পেস্ট করুন (যেমন: AIzaSy... বা sk-...)"
+              autocomplete="off"
+            />
+            <button type="button" class="secondary-btn" id="fetch-primary-models-btn">
+              মডেল লোড করুন
+            </button>
+          </div>
+          <p class="field-hint" id="primary-key-hint">
+            লোকাল ব্রাউজার স্টোরেজে (`chrome.storage.local`) সংরক্ষিত থাকবে। API Key দেওয়ার সাথে সাথে এভেইলেবল ও ফ্রি মডেলগুলো নিচে লোড হবে।
+          </p>
+        </div>
+
+        <div class="field-group">
+          <div class="label-row">
+            <label class="field-label" for="primary-model-select">এভেইলেবল ও ফ্রি মডেল সিলেক্ট করুন</label>
+            <span class="model-count-badge" id="primary-model-status">Ready</span>
+          </div>
+          <select id="primary-model-select" class="select-input"></select>
+        </div>
+      </div>
+
+      <!-- Fallback AI Card (100% Reliability) -->
+      <div class="card fallback-card">
+        <div class="card-header fallback-header">
+          <div>
+            <span class="eyebrow">STEP 02 • 100% RELIABILITY FAILOVER</span>
+            <h2 class="card-title">Fallback AI কনফিগারেশন (বিকল্প AI)</h2>
+            <p class="card-desc">
+              প্রাইমারি AI (যেমন Gemini ফ্রি মডেল) কোনো কারণে রেট-লিমিট বা রেসপন্স দিতে ব্যর্থ হলে অটোমেটিক এই Fallback AI দিয়ে ১০০% নিশ্চিতভাবে ফর্ম অটোফিল সম্পন্ন করবে।
+            </p>
+          </div>
+          <label class="switch" title="Fallback AI চালু/বন্ধ করুন">
+            <input type="checkbox" id="enable-fallback" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div id="fallback-body" class="fallback-body">
+          <div class="field-Row-2col">
+            <div class="field-group">
+              <label class="field-label" for="fallback-provider-select">Fallback AI প্ল্যাটফর্ম</label>
+              <select id="fallback-provider-select" class="select-input">
+                <option value="openrouter">OpenRouter (Free Models)</option>
+                <option value="groq">Groq Cloud (Free &amp; Instant)</option>
+                <option value="google">Google Gemini (Free Tier)</option>
+                <option value="nvidia">NVIDIA NIM (Free Credits)</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic (Claude)</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <div class="label-row">
+                <label class="field-label" for="fallback-model-select">Fallback মডেল</label>
+                <span class="model-count-badge" id="fallback-model-status">Ready</span>
+              </div>
+              <select id="fallback-model-select" class="select-input"></select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="label-row">
+              <label class="field-label" for="fallback-api-key">Fallback API Key</label>
+              <button type="button" class="text-btn" id="toggle-fallback-key">Show Key</button>
+            </div>
+            <div class="input-with-action">
+              <input
+                type="password"
+                id="fallback-api-key"
+                class="text-input mono"
+                placeholder="Fallback প্ল্যাটফর্মের API Key দিন"
+                autocomplete="off"
+              />
+              <button type="button" class="secondary-btn" id="fetch-fallback-models-btn">
+                মডেল লোড করুন
+              </button>
+            </div>
+          </div>
+
+          <div class="emergency-toggle-row">
+            <div>
+              <strong class="emergency-title">Smart Local Emergency Guarantee</strong>
+              <p class="emergency-sub">
+                প্রাইমারি এবং ফলব্যাক উভয় API অফলাইন বা কোটা শেষ হলেও বিল্ট-ইন স্মার্ট ইঞ্জিন দিয়ে বাংলা/ইংরেজি ও NID বুঝে ফর্ম পূরণ নিশ্চিত করবে।
+              </p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="enable-emergency-fallback" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Bar -->
+      <div class="save-bar">
+        <button type="button" class="primary-btn" id="save-settings-btn">
+          <span>সেটিংস সেভ করুন (Save Configuration)</span>
+        </button>
+        <span class="save-feedback" id="save-feedback"></span>
+      </div>
+    </section>
+
+    <!-- Right Column: How It Works + Built-in Live Developer Test Form -->
+    <aside class="playground-column">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <span class="eyebrow">LIVE DEVELOPER SANDBOX</span>
+            <h2 class="card-title">এখানেই টেস্ট করে দেখুন (Test Form)</h2>
+            <p class="card-desc">
+              সেটিংস সেভ করার পর উপরের ব্রাউজার টুলবারে <strong>AutoFill by Ai</strong> আইকনে ক্লিক করুন অথবা নিচের <strong>"⚡ Test AutoFill Now"</strong> বাটনে ক্লিক করে দেখুন বাংলা/ইংরেজি নাম, First/Last Name এবং NID নাম্বার কিভাবে স্মার্টভাবে পূরণ হয়!
+            </p>
+          </div>
+        </div>
+
+        <form id="demo-test-form" class="demo-form" onsubmit="return false;">
+          <div class="field-group">
+            <label class="field-label" for="demo_full_name_en">Full Name (English)</label>
+            <input
+              type="text"
+              id="demo_full_name_en"
+              name="full_name_en"
+              class="text-input"
+              placeholder="e.g. Abdul Korim"
+            />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="demo_full_name_bn">পূর্ণ নাম (বাংলায় লিখুন)</label>
+            <input
+              type="text"
+              id="demo_full_name_bn"
+              name="full_name_bn"
+              class="text-input"
+              placeholder="আপনার পূর্ণ নাম বাংলাতে লিখুন (যেমন: আব্দুল করিম)"
+            />
+          </div>
+
+          <div class="field-Row-2col">
+            <div class="field-group">
+              <label class="field-label" for="demo_first_name">First Name</label>
+              <input
+                type="text"
+                id="demo_first_name"
+                name="first_name"
+                class="text-input"
+                placeholder="First Name (e.g. Abdul)"
+              />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="demo_last_name">Last Name</label>
+              <input
+                type="text"
+                id="demo_last_name"
+                name="last_name"
+                class="text-input"
+                placeholder="Last Name (e.g. Korim)"
+              />
+            </div>
+          </div>
+
+          <div class="field-Row-2col">
+            <div class="field-group">
+              <label class="field-label" for="demo_nid">NID নাম্বার (National ID Card)</label>
+              <input
+                type="number"
+                id="demo_nid"
+                name="nid_number"
+                class="text-input"
+                placeholder="১০ বা ১৩ ডিজিটের NID নাম্বার দিন"
+              />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="demo_phone">মোবাইল নাম্বার (Phone Number)</label>
+              <input
+                type="tel"
+                id="demo_phone"
+                name="mobile_number"
+                class="text-input"
+                placeholder="017XXXXXXXX"
+              />
+            </div>
+          </div>
+
+          <div class="field-Row-2col">
+            <div class="field-group">
+              <label class="field-label" for="demo_email">Email Address</label>
+              <input
+                type="email"
+                id="demo_email"
+                name="email"
+                class="text-input"
+                placeholder="developer@example.com"
+              />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="demo_division">বিভাগ (Division)</label>
+              <select id="demo_division" name="division" class="select-input">
+                <option value="">-- বিভাগ নির্বাচন করুন --</option>
+                <option value="dhaka">ঢাকা (Dhaka)</option>
+                <option value="chattogram">চট্টগ্রাম (Chattogram)</option>
+                <option value="rajshahi">রাজশাহী (Rajshahi)</option>
+                <option value="khulna">খুলনা (Khulna)</option>
+                <option value="sylhet">সিলেট (Sylhet)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="demo_address_bn">বর্তমান ঠিকানা (বাংলায় বিস্তারিত)</label>
+            <textarea
+              id="demo_address_bn"
+              name="present_address_bn"
+              class="text-input"
+              rows="2"
+              placeholder="বাসা/রোড, এলাকা ও জেলার নাম বাংলায় লিখুন"
+            ></textarea>
+          </div>
+
+          <div class="demo-actions">
+            <button type="button" class="primary-btn demo-trigger-btn" id="trigger-demo-autofill">
+              ⚡ Test AutoFill Now
+            </button>
+            <button type="reset" class="secondary-btn">
+              ফর্ম ক্লিয়ার করুন
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Quick Usage Guide Card -->
+      <div class="card guide-card">
+        <span class="eyebrow">HOW IT WORKS</span>
+        <h3 class="guide-title">কিভাবে ব্যবহার করবেন?</h3>
+        <ul class="guide-list">
+          <li>
+            <strong>১. ওয়ান-টাইম সেটআপ:</strong> আপনার পছন্দের AI প্ল্যাটফর্ম ও API Key দিয়ে মডেল সিলেক্ট করে সেভ করুন।
+          </li>
+          <li>
+            <strong>২. ওয়ান-ক্লিক অটোফিল:</strong> যেকোনো রেজিস্ট্রেশন বা ফর্ম পেইজে গিয়ে ব্রাউজারের এক্সটেনশন আইকনে ক্লিক করুন—আইকনে লোডিং অ্যানিমেশন দেখাবে এবং ব্যাকগ্রাউন্ডে ফর্ম এনালাইসিস হবে।
+          </li>
+          <li>
+            <strong>৩. সেটিংস আপডেট:</strong> যেকোনো সময় API Key বা মডেল পরিবর্তন করতে এক্সটেনশন আইকনে রাইট-ক্লিক করে <em>"Options"</em> বা <em>"⚙️ AutoFill by Ai — Settings"</em>-এ যান।
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <script src="content.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

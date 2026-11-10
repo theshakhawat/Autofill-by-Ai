@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "AutoFill by Ai",
+  "version": "1.0.0",
+  "description": "Smart AI-powered form autofiller for web developers. Analyzes labels, placeholders, and language context (Bengali & English) with multi-AI fallback.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "notifications",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "AutoFill by Ai — Click to AutoFill Form",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/icon48.png",
+        "icons/icon128.png",
+        "icons/loading.gif"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
